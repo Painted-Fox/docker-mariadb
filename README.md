@@ -18,5 +18,5 @@ This example uses `/tmp/mariadb` to store the MariaDB data, but you can modify t
 
 ```
 $ mkdir -p /tmp/mariadb
-$ sudo docker run -p 5432 -v /tmp/mariadb:/data paintedfox/mariadb
+$ sudo docker run -p 3306 -v /tmp/mariadb:/data paintedfox/mariadb
 ```
