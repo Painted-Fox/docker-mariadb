@@ -24,10 +24,13 @@ RUN apt-get -y install python-software-properties && \
     apt-get install -y mariadb-server && \
     /etc/init.d/mysql stop
 
-# delete anonymous users, set password "root" for user root,
-# allow remote access for user root, delete database "test"
-# borrowed from: https://github.com/mattes/docker-mysql/blob/master/Dockerfile
-RUN /etc/init.d/mysql start && mysql -S /var/run/mysqld/mysqld.sock -u root -e "DELETE FROM mysql.user WHERE User = ''; UPDATE mysql.user SET Password=PASSWORD('root') WHERE User = 'root'; GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root'; DROP DATABASE IF EXISTS test; FLUSH PRIVILEGES;"; /etc/init.d/mysql stop
+# Create the superuser
+ENV MARIADB_USER docker
+ENV MARIADB_PASS docker
+RUN /etc/init.d/mysql start && \
+    mysql -u root -e \
+    "CREATE USER '$MARIADB_USER'@'localhost' IDENTIFIED BY '$MARIADB_PASS'; GRANT ALL PRIVILEGES ON *.* TO '$MARIADB_USER'@'localhost' WITH GRANT OPTION; CREATE USER '$MARIADB_USER'@'%' IDENTIFIED BY '$MARIADB_PASS'; GRANT ALL PRIVILEGES ON *.* TO '$MARIADB_USER'@'%' WITH GRANT OPTION;"
+    /etc/init.d/mysql stop
 
 # Decouple our data from our container.
 VOLUME ["/data"]
@@ -38,6 +41,7 @@ RUN sed -i -e 's/^datadir\s*=.*/datadir = \/data/' /etc/mysql/my.cnf
 # Configure MariaDB to listen on any address.
 RUN sed -i -e 's/^bind-address/#bind-address/' /etc/mysql/my.cnf
 
+EXPOSE 3306
 ADD start.sh /start.sh
 RUN chmod +x /start.sh
-#ENTRYPOINT ["/start.sh"]
+ENTRYPOINT ["/start.sh"]
