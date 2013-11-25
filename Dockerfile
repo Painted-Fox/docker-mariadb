@@ -24,14 +24,6 @@ RUN apt-get -y install python-software-properties && \
     apt-get install -y mariadb-server && \
     /etc/init.d/mysql stop
 
-# Create the superuser
-ENV MARIADB_USER docker
-ENV MARIADB_PASS docker
-RUN /etc/init.d/mysql start && \
-    mysql -u root -e \
-    "CREATE USER '$MARIADB_USER'@'localhost' IDENTIFIED BY '$MARIADB_PASS'; GRANT ALL PRIVILEGES ON *.* TO '$MARIADB_USER'@'localhost' WITH GRANT OPTION; CREATE USER '$MARIADB_USER'@'%' IDENTIFIED BY '$MARIADB_PASS'; GRANT ALL PRIVILEGES ON *.* TO '$MARIADB_USER'@'%' WITH GRANT OPTION;"
-    /etc/init.d/mysql stop
-
 # Decouple our data from our container.
 VOLUME ["/data"]
 

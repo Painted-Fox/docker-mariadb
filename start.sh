@@ -26,6 +26,10 @@ sleep 1
 DB_MAINT_PASS=$(cat /etc/mysql/debian.cnf |grep -m 1 "password\s*=\s*"| sed 's/^password\s*=\s*//')
 mysql -u root -e \
     "GRANT ALL PRIVILEGES ON *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY '$DB_MAINT_PASS';"
+
+# Create the superuser named 'docker'.
+mysql -u root -e \
+    "DELETE FROM mysql.user WHERE user = 'docker'; CREATE USER 'docker'@'localhost' IDENTIFIED BY 'docker'; GRANT ALL PRIVILEGES ON *.* TO 'docker'@'localhost' WITH GRANT OPTION; CREATE USER 'docker'@'%' IDENTIFIED BY 'docker'; GRANT ALL PRIVILEGES ON *.* TO 'docker'@'%' WITH GRANT OPTION;" && \
 /etc/init.d/mysql stop
 
 # Start MariaDB
