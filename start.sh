@@ -49,4 +49,4 @@ EOF
 
 # Start MariaDB
 echo "Starting MariaDB..."
-/usr/bin/mysqld_safe --skip-syslog --log-error=$DATADIR/mysql.err
+/usr/bin/mysqld_safe --skip-syslog --log-error=$DATADIR/mysql.log
