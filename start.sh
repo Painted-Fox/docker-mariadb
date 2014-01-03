@@ -4,7 +4,14 @@
 # Stop on error
 set -e
 
-DATADIR="/data"
+SUPER_USER=super
+SUPER_PASS=$(pwgen -s -1 16)
+DATADIR=/data
+
+# Echo out info to later obtain by running `docker logs container_name`
+echo "MARIADB_SUPER_USER=$SUPER_USER"
+echo "MARIADB_SUPER_PASS=$SUPER_PASS"
+echo "MARIADB_DATA_DIR=$DATADIR"
 
 # test if DATADIR has content
 if [ ! "$(ls -A $DATADIR)" ]; then
@@ -17,21 +24,29 @@ fi
 chown -R mysql $DATADIR
 chown root $DATADIR/debian*.flag
 
+/etc/init.d/mysql start
+sleep 1
+
 # The password for 'debian-sys-maint'@'localhost' is auto generated.
 # The database inside of DATADIR may not have been generated with this password.
 # So, we need to set this for our database to be portable.
 echo "Setting password for the 'debian-sys-maint'@'localhost' user"
-/etc/init.d/mysql start
-sleep 1
-DB_MAINT_PASS=$(cat /etc/mysql/debian.cnf |grep -m 1 "password\s*=\s*"| sed 's/^password\s*=\s*//')
+DB_MAINT_PASS=$(cat /etc/mysql/debian.cnf | grep -m 1 "password\s*=\s*"| sed 's/^password\s*=\s*//')
 mysql -u root -e \
     "GRANT ALL PRIVILEGES ON *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY '$DB_MAINT_PASS';"
 
-# Create the superuser named 'docker'.
-mysql -u root -e \
-    "DELETE FROM mysql.user WHERE user = 'docker'; CREATE USER 'docker'@'localhost' IDENTIFIED BY 'docker'; GRANT ALL PRIVILEGES ON *.* TO 'docker'@'localhost' WITH GRANT OPTION; CREATE USER 'docker'@'%' IDENTIFIED BY 'docker'; GRANT ALL PRIVILEGES ON *.* TO 'docker'@'%' WITH GRANT OPTION;" && \
+# Create the superuser.
+mysql -u root -e "$(cat << EOF
+    DELETE FROM mysql.user WHERE user = '$SUPER_USER';
+    CREATE USER '$SUPER_USER'@'localhost' IDENTIFIED BY '$SUPER_PASS';
+    GRANT ALL PRIVILEGES ON *.* TO '$SUPER_USER'@'localhost' WITH GRANT OPTION;
+    CREATE USER '$SUPER_USER'@'%' IDENTIFIED BY '$SUPER_PASS';
+    GRANT ALL PRIVILEGES ON *.* TO '$SUPER_USER'@'%' WITH GRANT OPTION;
+EOF
+)"
+
 /etc/init.d/mysql stop
 
 # Start MariaDB
 echo "Starting MariaDB..."
-/usr/bin/mysqld_safe
+/usr/bin/mysqld_safe --skip-syslog --log-error=$DATADIR/mysql.err
