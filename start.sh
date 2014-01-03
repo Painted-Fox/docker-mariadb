@@ -6,29 +6,34 @@ set -e
 
 SUPER_USER=super
 SUPER_PASS=$(pwgen -s -1 16)
-DATADIR=/data
+DATA_DIR=/data
+MYSQL_LOG=$DATA_DIR/mysql.log
 
 # Echo out info to later obtain by running `docker logs container_name`
 echo "MARIADB_SUPER_USER=$SUPER_USER"
 echo "MARIADB_SUPER_PASS=$SUPER_PASS"
-echo "MARIADB_DATA_DIR=$DATADIR"
+echo "MARIADB_DATA_DIR=$DATA_DIR"
 
-# test if DATADIR has content
-if [ ! "$(ls -A $DATADIR)" ]; then
-    echo "Initializing MariaDB at $DATADIR"
-    # Copy the data that we generated within the container to the empty DATADIR.
-    cp -R /var/lib/mysql/* $DATADIR
+# test if DATA_DIR has content
+if [[ ! "$(ls -A $DATA_DIR)" ]]; then
+    echo "Initializing MariaDB at $DATA_DIR"
+    # Copy the data that we generated within the container to the empty DATA_DIR.
+    cp -R /var/lib/mysql/* $DATA_DIR
 fi
 
-# Ensure mysql owns the DATADIR
-chown -R mysql $DATADIR
-chown root $DATADIR/debian*.flag
+# Ensure mysql owns the DATA_DIR
+chown -R mysql $DATA_DIR
+chown root $DATA_DIR/debian*.flag
 
-/etc/init.d/mysql start
-sleep 1
+/usr/bin/mysqld_safe --skip-syslog --log-error=$MYSQL_LOG >> /dev/null &
+
+# Wait for mysql to finish starting up first.
+while [[ ! -e /run/mysqld/mysqld.sock ]] ; do
+    inotifywait -q -e create /run/mysqld/ >> /dev/null
+done
 
 # The password for 'debian-sys-maint'@'localhost' is auto generated.
-# The database inside of DATADIR may not have been generated with this password.
+# The database inside of DATA_DIR may not have been generated with this password.
 # So, we need to set this for our database to be portable.
 echo "Setting password for the 'debian-sys-maint'@'localhost' user"
 DB_MAINT_PASS=$(cat /etc/mysql/debian.cnf | grep -m 1 "password\s*=\s*"| sed 's/^password\s*=\s*//')
@@ -45,8 +50,8 @@ mysql -u root -e "$(cat << EOF
 EOF
 )"
 
-/etc/init.d/mysql stop
+kill $(cat /run/mysqld/mysqld.pid)
 
 # Start MariaDB
 echo "Starting MariaDB..."
-/usr/bin/mysqld_safe --skip-syslog --log-error=$DATADIR/mysql.log
+/usr/bin/mysqld_safe --skip-syslog --log-error=$MYSQL_LOG
