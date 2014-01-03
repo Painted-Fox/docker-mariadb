@@ -35,7 +35,6 @@ done
 # The password for 'debian-sys-maint'@'localhost' is auto generated.
 # The database inside of DATA_DIR may not have been generated with this password.
 # So, we need to set this for our database to be portable.
-echo "Setting password for the 'debian-sys-maint'@'localhost' user"
 DB_MAINT_PASS=$(cat /etc/mysql/debian.cnf | grep -m 1 "password\s*=\s*"| sed 's/^password\s*=\s*//')
 mysql -u root -e \
     "GRANT ALL PRIVILEGES ON *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY '$DB_MAINT_PASS';"
@@ -43,6 +42,7 @@ mysql -u root -e \
 # Create the superuser.
 mysql -u root -e "$(cat << EOF
     DELETE FROM mysql.user WHERE user = '$SUPER_USER';
+    FLUSH PRIVILEGES;
     CREATE USER '$SUPER_USER'@'localhost' IDENTIFIED BY '$SUPER_PASS';
     GRANT ALL PRIVILEGES ON *.* TO '$SUPER_USER'@'localhost' WITH GRANT OPTION;
     CREATE USER '$SUPER_USER'@'%' IDENTIFIED BY '$SUPER_PASS';

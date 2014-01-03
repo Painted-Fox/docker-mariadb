@@ -1,6 +1,7 @@
 # docker-mariadb
 
-A Dockerfile that produces a container that will run [MariaDB][mariadb] 5.5, a drop-in replacement for MySQL.
+A Dockerfile that produces a container that will run [MariaDB][mariadb] 5.5,
+a drop-in replacement for MySQL.
 
 [mariadb]: https://mariadb.org/
 
@@ -72,7 +73,6 @@ $ docker logs mariadb
 MARIADB_SUPER_USER=super
 MARIADB_SUPER_PASS=FzNQiroBkTHLX7y4
 MARIADB_DATA_DIR=/data
-Setting password for the 'debian-sys-maint'@'localhost' user
 Starting MariaDB...
 140103 20:33:49 mysqld_safe Logging to '/data/mysql.log'.
 140103 20:33:49 mysqld_safe Starting mysqld daemon with databases from /data
