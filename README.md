@@ -6,17 +6,81 @@ A Dockerfile that produces a container that will run [MariaDB][mariadb] 5.5, a d
 
 ## Image Creation
 
+This example creates the image with the tag `paintedfox/mariadb`, but you can
+change this to use your own username.
+
 ```
-$ sudo docker build -t="paintedfox/mariadb" .
+$ docker build -t="paintedfox/mariadb" .
+```
+
+Alternately, you can run the following if you have *make* installed...
+
+```
+$ make
+```
+
+You can also specify a custom docker username like so:
+
+```
+$ make DOCKER_USER=paintedfox
 ```
 
 ## Container Creation / Running
 
-The MariaDB server is configured to store data in `/data` inside the container.  You can map the container's `/data` volume to a volume on the host so the data becomes independant of the running container.
+The MariaDB server is configured to store data in `/data` inside the container.
+You can map the container's `/data` volume to a volume on the host so the data
+becomes independant of the running container.
 
-This example uses `/tmp/mariadb` to store the MariaDB data, but you can modify this to your needs.
+This example uses `/tmp/mariadb` to store the MariaDB data, but you can modify
+this to your needs.
 
 ```
 $ mkdir -p /tmp/mariadb
-$ sudo docker run -p 3306 -v /tmp/mariadb:/data paintedfox/mariadb
+$ docker run -d -name="mariadb" -p 127.0.0.1:3306:3306 -v /tmp/mariadb:/data paintedfox/mariadb
+```
+
+Alternately, you can run the following if you have *make* installed...
+
+```
+$ make run
+```
+
+You can also specify a custom port to bind to on the host and a custom data
+directory on the host like so:
+
+```
+$ sudo mkdir -p /var/lib/mysql
+$ make run PORT=127.0.0.1:3306 DATA_DIR=/var/lib/mysql
+```
+
+## Connecting to the Database
+
+To connect to the MariaDB server, you will need to make sure you have a client.
+You can install the `mysql-client` on your host machine by running the
+following:
+
+```
+$ sudo apt-get install mysql-client
+```
+
+As part of the startup for MariaDB, the container will generate a random
+password for the superuser.  To view the login in run `docker logs
+<container_name>` like so:
+
+```
+$ docker logs mariadb
+MARIADB_SUPER_USER=super
+MARIADB_SUPER_PASS=FzNQiroBkTHLX7y4
+MARIADB_DATA_DIR=/data
+Setting password for the 'debian-sys-maint'@'localhost' user
+Starting MariaDB...
+140103 20:33:49 mysqld_safe Logging to '/data/mysql.log'.
+140103 20:33:49 mysqld_safe Starting mysqld daemon with databases from /data
+```
+
+Then you can connect to the MariaDB server from the host with the following
+command:
+
+```
+$ mysql -u super --password=FzNQiroBkTHLX7y4 --protocol=tcp
 ```
