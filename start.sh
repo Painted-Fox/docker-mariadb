@@ -50,7 +50,13 @@ mysql -u root -e "$(cat << EOF
 EOF
 )"
 
-kill $(cat /run/mysqld/mysqld.pid)
+PID=$(cat /run/mysqld/mysqld.pid)
+
+kill $PID
+
+while [[ ( -d /proc/$PID ) && ( -z `grep zombie /proc/$PID/status` ) ]]; do
+    sleep 1
+done
 
 # Start MariaDB
 echo "Starting MariaDB..."
