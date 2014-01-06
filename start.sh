@@ -4,8 +4,8 @@
 # Stop on error
 set -e
 
-SUPER_USER=super
-SUPER_PASS=$(pwgen -s -1 16)
+SUPER_USER=${USER:-super}
+SUPER_PASS=${PASSWORD:-$(pwgen -s -1 16)}
 DATA_DIR=/data
 MYSQL_LOG=$DATA_DIR/mysql.log
 
