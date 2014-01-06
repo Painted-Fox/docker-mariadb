@@ -3,12 +3,14 @@ DOCKER_USER=paintedfox
 
 # Change this to suit your needs.
 NAME:=mariadb
+SUPER_USER:=super
+SUPER_PASS:=$(shell pwgen -s -1 16)
 DATA_DIR:=/tmp/mariadb
 PORT:=127.0.0.1:3306
 
 RUNNING_MARIADB:=$(shell docker ps | grep mariadb | cut -f 1 -d ' ')
 ALL_MARIADB:=$(shell docker ps -a | grep mariadb | cut -f 1 -d ' ')
-DOCKER_RUN_COMMON=-name="$(NAME)" -p $(PORT):3306 -v $(DATA_DIR):/data $(DOCKER_USER)/mariadb
+DOCKER_RUN_COMMON=-name="$(NAME)" -p $(PORT):3306 -v $(DATA_DIR):/data -e SUPER_USER="$(SUPER_USER)" -e SUPER_PASS=$(SUPER_PASS) $(DOCKER_USER)/mariadb
 
 all: build
 
