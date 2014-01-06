@@ -51,10 +51,10 @@ EOF
 )"
 
 PID=$(cat /run/mysqld/mysqld.pid)
-
 kill $PID
 
-while [[ ( -d /proc/$PID ) && ( -z `grep zombie /proc/$PID/status` ) ]]; do
+# Wait until the process doesn't exists or becomes a zombie.
+while [[ ( -d /proc/$PID ) && ( $(grep -c zombie /proc/$PID/status) -eq 0 ) ]]; do
     sleep 1
 done
 
