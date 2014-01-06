@@ -46,8 +46,8 @@ $ mkdir -p /tmp/mariadb
 $ docker run -d -name="mariadb" \
              -p 127.0.0.1:3306:3306 \
              -v /tmp/mariadb:/data paintedfox/mariadb \
-             -e SUPER_USER="super" \
-             -e SUPER_PASS="$(pwgen -s -1 16) \
+             -e USER="super" \
+             -e PASS="$(pwgen -s -1 16) \
              paintedfox/mariadb
 ```
 
@@ -64,8 +64,8 @@ directory, and the superuser username and password on the host like so:
 $ sudo mkdir -p /var/lib/mysql
 $ make run PORT=127.0.0.1:3306 \
            DATA_DIR=/var/lib/mysql \
-           SUPER_USER=super \
-           SUPER_PASS=$(pwgen -s -1 16)
+           USER=super \
+           PASS=$(pwgen -s -1 16)
 ```
 
 ## Connecting to the Database
@@ -84,8 +84,8 @@ password for the superuser.  To view the login in run `docker logs
 
 ``` shell
 $ docker logs mariadb
-MARIADB_SUPER_USER=super
-MARIADB_SUPER_PASS=FzNQiroBkTHLX7y4
+MARIADB_USER=super
+MARIADB_PASS=FzNQiroBkTHLX7y4
 MARIADB_DATA_DIR=/data
 Starting MariaDB...
 140103 20:33:49 mysqld_safe Logging to '/data/mysql.log'.
@@ -120,14 +120,14 @@ commands:
 
 ``` shell
 $ apt-get install -y mysql-client
-$ mysql -u "$DB_ENV_SUPER_USER" \
-        -p"$DB_ENV_SUPER_PASS" \
+$ mysql -u "$DB_ENV_USER" \
+        -p"$DB_ENV_PASS" \
         -h "$DB_PORT_3306_TCP_ADDR" \
         -P "$DB_PORT_3306_TCP_PORT"
 ```
 
-If you ran the *mariadb* container with the flags `-e SUPER_USER=<user>` and
-`-e SUPER_PASS=<pass>`, then the linked container should have these variables
-available in its environment.  Since we aliased the database container with the
-name *db*, the environment variables from the database container are copied
-into the linked container with the prefix `DB_ENV_`.
+If you ran the *mariadb* container with the flags `-e USER=<user>` and `-e
+PASS=<pass>`, then the linked container should have these variables available
+in its environment.  Since we aliased the database container with the name
+*db*, the environment variables from the database container are copied into the
+linked container with the prefix `DB_ENV_`.
