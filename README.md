@@ -47,7 +47,7 @@ $ docker run -d -name="mariadb" \
              -p 127.0.0.1:3306:3306 \
              -v /tmp/mariadb:/data paintedfox/mariadb \
              -e USER="super" \
-             -e PASS="$(pwgen -s -1 16) \
+             -e PASS="$(pwgen -s -1 16)" \
              paintedfox/mariadb
 ```
 
