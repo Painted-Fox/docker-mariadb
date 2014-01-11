@@ -33,8 +33,8 @@ RUN sed -i -e 's/^datadir\s*=.*/datadir = \/data/' /etc/mysql/my.cnf
 RUN sed -i -e 's/^bind-address/#bind-address/' /etc/mysql/my.cnf
 
 EXPOSE 3306
-ADD start.sh /start.sh
-RUN chmod +x /start.sh
+ADD scripts /scripts
+RUN chmod +x /scripts/start.sh
 RUN touch /firstrun
 
-ENTRYPOINT ["/start.sh"]
+ENTRYPOINT ["/scripts/start.sh"]
