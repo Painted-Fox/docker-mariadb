@@ -25,6 +25,9 @@ fi
 chown -R mysql $DATA_DIR
 chown root $DATA_DIR/debian*.flag
 
+# Remove any leftover sockets from previous runs
+rm -f /run/mysqld/mysqld.sock
+
 /usr/bin/mysqld_safe --skip-syslog --log-error=$MYSQL_LOG >> /dev/null &
 
 # Wait for mysql to finish starting up first.
