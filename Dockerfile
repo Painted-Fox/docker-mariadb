@@ -35,4 +35,6 @@ RUN sed -i -e 's/^bind-address/#bind-address/' /etc/mysql/my.cnf
 EXPOSE 3306
 ADD start.sh /start.sh
 RUN chmod +x /start.sh
+RUN touch /firstrun
+
 ENTRYPOINT ["/start.sh"]
