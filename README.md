@@ -45,7 +45,7 @@ mariadb`.
 $ mkdir -p /tmp/mariadb
 $ docker run -d -name="mariadb" \
              -p 127.0.0.1:3306:3306 \
-             -v /tmp/mariadb:/data paintedfox/mariadb \
+             -v /tmp/mariadb:/data \
              -e USER="super" \
              -e PASS="$(pwgen -s -1 16)" \
              paintedfox/mariadb
@@ -61,9 +61,9 @@ You can also specify a custom port to bind to on the host, a custom data
 directory, and the superuser username and password on the host like so:
 
 ``` shell
-$ sudo mkdir -p /var/lib/mysql
+$ sudo mkdir -p /srv/docker/mariadb
 $ make run PORT=127.0.0.1:3306 \
-           DATA_DIR=/var/lib/mysql \
+           DATA_DIR=/srv/docker/mariadb \
            USER=super \
            PASS=$(pwgen -s -1 16)
 ```
@@ -72,7 +72,7 @@ $ make run PORT=127.0.0.1:3306 \
 
 To connect to the MariaDB server, you will need to make sure you have a client.
 You can install the `mysql-client` on your host machine by running the
-following:
+following (Ubuntu 12.04LTS):
 
 ``` shell
 $ sudo apt-get install mysql-client
@@ -121,7 +121,7 @@ commands:
 ``` shell
 $ apt-get install -y mysql-client
 $ mysql -u "$DB_ENV_USER" \
-        -p"$DB_ENV_PASS" \
+        -p "$DB_ENV_PASS" \
         -h "$DB_PORT_3306_TCP_ADDR" \
         -P "$DB_PORT_3306_TCP_PORT"
 ```
