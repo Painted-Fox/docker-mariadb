@@ -120,10 +120,7 @@ commands:
 
 ``` shell
 $ apt-get install -y mysql-client
-$ mysql -u "$DB_ENV_USER" \
-        -p "$DB_ENV_PASS" \
-        -h "$DB_PORT_3306_TCP_ADDR" \
-        -P "$DB_PORT_3306_TCP_PORT"
+$ mysql -u "$DB_ENV_USER" --password="$DB_ENV_PASS" -h "$DB_PORT_3306_TCP_ADDR" -P "$DB_PORT_3306_TCP_PORT"
 ```
 
 If you ran the *mariadb* container with the flags `-e USER=<user>` and `-e
