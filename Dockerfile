@@ -1,9 +1,10 @@
+# Piwik (https://piwik.org/)
 # MariaDB (https://mariadb.org/)
 
-FROM ubuntu:precise
-MAINTAINER Ryan Seto <ryanseto@yak.net>
+FROM ubuntu:saucy
+MAINTAINER Brian Prodoehl <bprodoehl@connectify.me>
 
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
+RUN echo "deb http://archive.ubuntu.com/ubuntu saucy main universe" > /etc/apt/sources.list
 
 # Ensure UTF-8
 RUN apt-get update
@@ -13,9 +14,9 @@ ENV LC_ALL     en_US.UTF-8
 
 # Install MariaDB from repository.
 RUN DEBIAN_FRONTEND=noninteractive && \
-    apt-get -y install python-software-properties && \
+    apt-get -y install software-properties-common python-software-properties && \
     apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db && \
-    add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.5/ubuntu precise main' && \
+    add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.5/ubuntu saucy main' && \
     apt-get update && \
     apt-get install -y mariadb-server
 
@@ -31,6 +32,22 @@ RUN sed -i -e 's/^datadir\s*=.*/datadir = \/data/' /etc/mysql/my.cnf
 
 # Configure MariaDB to listen on any address.
 RUN sed -i -e 's/^bind-address/#bind-address/' /etc/mysql/my.cnf
+
+
+
+# Install piwik dependencies
+RUN apt-get -y install apache2 libapache2-mod-php5 php5-gd php5-json \
+                       php5-mysql unzip wget supervisor
+
+RUN cd /var/www/ && \
+    wget http://builds.piwik.org/latest.zip && \
+    unzip latest.zip && \
+    mv piwik/* . && \
+    rm -r piwik && \
+    chmod a+w /var/www/tmp && \
+    chmod a+w /var/www/config && \
+    rm latest.zip && \
+    rm /var/www/index.html
 
 EXPOSE 3306
 ADD scripts /scripts

@@ -27,6 +27,10 @@ pre_start_action
 
 wait_for_mysql_and_run_post_start_action &
 
+
+echo "Starting Apache..."
+service apache2 start
+
 # Start MariaDB
 echo "Starting MariaDB..."
 exec /usr/bin/mysqld_safe --skip-syslog --log-error=$MYSQL_LOG
