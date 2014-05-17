@@ -10,7 +10,7 @@ PORT:=127.0.0.1:3306
 
 RUNNING:=$(shell docker ps | grep $(NAME) | cut -f 1 -d ' ')
 ALL:=$(shell docker ps -a | grep $(NAME) | cut -f 1 -d ' ')
-DOCKER_RUN_COMMON=-name="$(NAME)" -p $(PORT):3306 -v $(DATA_DIR):/data -e USER="$(USER)" -e PASS="$(PASS)" $(DOCKER_USER)/mariadb
+DOCKER_RUN_COMMON=--name="$(NAME)" -p $(PORT):3306 -v $(DATA_DIR):/data -e USER="$(USER)" -e PASS="$(PASS)" $(DOCKER_USER)/mariadb
 
 all: build
 
@@ -23,7 +23,7 @@ run: clean
 
 bash: clean
 	mkdir -p $(DATA_DIR)
-	docker run -entrypoint="/bin/bash" -t -i $(DOCKER_RUN_COMMON)
+	docker run -t -i $(DOCKER_RUN_COMMON) /sbin/my_init -- bash -l
 
 # Removes existing containers.
 clean:
