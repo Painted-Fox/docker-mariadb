@@ -1,6 +1,6 @@
 # MariaDB (https://mariadb.org/)
 
-FROM phusion/baseimage
+FROM phusion/baseimage:0.9.10
 MAINTAINER Ryan Seto <ryanseto@yak.net>
 
 # Ensure UTF-8
