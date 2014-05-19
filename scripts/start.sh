@@ -4,9 +4,7 @@
 # Stop on error
 set -e
 
-
 DATA_DIR=/data
-MYSQL_LOG=$DATA_DIR/mysql.log
 
 if [[ -e /firstrun ]]; then
   source /scripts/first_run.sh
@@ -29,4 +27,4 @@ wait_for_mysql_and_run_post_start_action &
 
 # Start MariaDB
 echo "Starting MariaDB..."
-exec /usr/bin/mysqld_safe --skip-syslog --log-error=$MYSQL_LOG
+exec /usr/bin/mysqld_safe
