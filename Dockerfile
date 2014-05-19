@@ -21,7 +21,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y pwgen inotify-tools
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Decouple our data from our container.
-VOLUME ["/data"]
+VOLUME ["/data", "/var/log/mysql", "/etc/mysql"]
 
 # Configure the database to use our data dir.
 RUN sed -i -e 's/^datadir\s*=.*/datadir = \/data/' /etc/mysql/my.cnf
