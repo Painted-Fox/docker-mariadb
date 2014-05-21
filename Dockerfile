@@ -1,4 +1,4 @@
-# MariaDB (https://mariadb.org/)
+#MariaDB (https://mariadb.org/)
 
 FROM phusion/baseimage:0.9.10
 MAINTAINER Ryan Seto <ryanseto@yak.net>
@@ -20,11 +20,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y pwgen inotify-tools
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Decouple our data from our container.
-VOLUME ["/data", "/var/log/mysql", "/etc/mysql"]
-
 # Configure the database to use our data dir.
-RUN sed -i -e 's/^datadir\s*=.*/datadir = \/data/' /etc/mysql/my.cnf
+RUN sed -i -e 's/^datadir\s*=.*/datadir = \/data/' /etc/mysql/my.cnf 
 
 # Configure MariaDB to listen on any address.
 RUN sed -i -e 's/^bind-address/#bind-address/' /etc/mysql/my.cnf
@@ -41,6 +38,9 @@ RUN touch /firstrun
 # Add daemon to be run by runit.
 RUN mkdir /etc/service/mariadb
 RUN ln -s /scripts/start.sh /etc/service/mariadb/run
+
+# Expose our data, log, and configuration directories.
+VOLUME ["/data", "/var/log/mysql", "/etc/mysql"]
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
