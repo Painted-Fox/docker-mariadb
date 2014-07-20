@@ -39,7 +39,7 @@ RUN apt-get -y install apache2 libapache2-mod-php5 php5-gd php5-json \
 
 RUN cd /var/www/html && \
     wget http://builds.piwik.org/latest.zip && \
-    unzip latest.zip && \
+    unzip -q latest.zip && \
     mv piwik/* . && \
     rm -r piwik && \
     chmod a+w /var/www/html/tmp && \
@@ -47,7 +47,7 @@ RUN cd /var/www/html && \
     rm latest.zip && \
     rm /var/www/html/index.html
 
-EXPOSE 3306
+EXPOSE 80 3306
 ADD scripts /scripts
 RUN chmod +x /scripts/start.sh
 RUN touch /firstrun

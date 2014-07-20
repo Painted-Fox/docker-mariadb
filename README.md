@@ -84,3 +84,8 @@ Starting MariaDB...
 ```
 
 The MARIADB_USER and MARIADB_PASS fields will be needed when configuring Piwik the first time.
+
+## Changelog
+
+2014-07-20: Updated to Piwik 2.4.1
+
