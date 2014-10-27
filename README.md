@@ -87,6 +87,7 @@ The MARIADB_USER and MARIADB_PASS fields will be needed when configuring Piwik t
 
 ## Changelog
 
+* 2014-10-27: Updated to Piwik 2.8.3
 * 2014-10-17: Updated to Piwik 2.8.0
 * 2014-10-08: Updated to Piwik 2.7.0
 * 2014-07-20: Updated to Piwik 2.4.1
