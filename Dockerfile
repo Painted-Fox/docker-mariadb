@@ -38,9 +38,9 @@ RUN apt-get -y install apache2 libapache2-mod-php5 php5-gd php5-json \
                        php5-mysql wget supervisor
 
 RUN cd /var/www/html && \
-    wget http://builds.piwik.org/piwik-2.8.3.tar.gz && \
-    tar -xzf piwik-2.8.3.tar.gz && \
-    rm piwik-2.8.3.tar.gz && \
+    wget http://builds.piwik.org/piwik-2.9.0.tar.gz && \
+    tar -xzf piwik-2.9.0.tar.gz && \
+    rm piwik-2.9.0.tar.gz && \
     mv piwik/* . && \
     rm -r piwik && \
     chmod a+w /var/www/html/tmp && \
